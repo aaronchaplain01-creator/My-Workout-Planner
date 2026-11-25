@@ -1,0 +1,18 @@
+MY WORKOUT PLANNER — ANDROID INSTALL PACKAGE
+
+This is the current My Workout Planner app packaged as an installable Progressive Web App (PWA), with its app icon, standalone display settings, and offline app-shell cache.
+
+IMPORTANT: It must be published to an HTTPS website before Android Chrome can install it. Opening index.html directly from Downloads will not install it as an app.
+
+PHONE-ONLY INSTALL STEPS
+1. Upload the contents of this ZIP (not the ZIP itself) to a static HTTPS hosting service such as Netlify Drop or GitHub Pages.
+2. Open the published HTTPS address in Google Chrome on your Samsung phone.
+3. Tap Chrome's three-dot menu (⋮).
+4. Choose Install app (or Add to Home screen), then confirm.
+5. Open Workout Planner from the new home-screen icon. It will launch in its own app-style window.
+
+DATA
+Workout plans, custom exercises, and workout logs are stored in this browser on this device using local storage. Use the app's backup/export option regularly. Clearing Chrome site data can erase this information. The app shell is cached for offline launch after the first successful visit; some remote images/fonts may still need internet.
+
+NOT AN APK YET
+This ZIP is an installable web app package, not a signed .apk file. A standalone APK requires an Android packaging/signing build step after the app has a stable HTTPS address. No APK has been built or signed in this package.
