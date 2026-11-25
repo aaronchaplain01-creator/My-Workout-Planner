@@ -1,25 +1,31 @@
 
-name: Build My Workout Planner APK
+name: Build My Workout Planner Android APK
 
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
-
-permissions:
-  contents: read
+    paths:
+      - 'index.html'
+      - 'build-android.yml'
+      - 'manifest.webmanifest'
+      - 'service-worker.js'
+      - 'icon.svg'
+      - '.github/workflows/build-android.yml'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out source
+      - name: Get app source
         uses: actions/checkout@v4
 
-      - name: Extract project ZIP
-        run: unzip -q My_Workout_Planner_Android_Source.zip
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - name: Set up Java 17
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -28,20 +34,31 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android SDK packages
-        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Prepare app files
+        run: |
+          mkdir -p www
+          tar --exclude=.git --exclude=.github --exclude=node_modules --exclude=android --exclude=www -cf - . | tar -xf - -C www
+          test -f www/index.html
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
+      - name: Install Capacitor
+        run: |
+          npm init -y
+          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+
+      - name: Create Android project
+        run: |
+          npx cap init "My Workout Planner" com.myworkoutplanner.app --web-dir=www
+          npx cap add android
+          npx cap sync android
 
       - name: Build APK
-        run: cd My_Workout_Planner_Android && gradle --no-daemon assembleDebug
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Save APK
         uses: actions/upload-artifact@v4
         with:
-          name: My-Workout-Planner-Android-APK
-          path: My_Workout_Planner_Android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+          name: My-Workout-Planner-Android
+          path: android/app/build/outputs/apk/debug/app-debug.apk
